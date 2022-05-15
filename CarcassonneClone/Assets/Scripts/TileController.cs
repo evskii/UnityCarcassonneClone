@@ -1,8 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+
 using UnityEngine;
 
+using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
 public class TileController : MonoBehaviour
@@ -25,12 +28,10 @@ public class TileController : MonoBehaviour
         tileConnectors = GetComponentsInChildren<TileConnector>();
         ToggleConnectors(false);
         tilePlaced = starterTile;
-    }
 
-    private void Start() {
-        renderer = GetComponentInChildren<SpriteRenderer>();
-        renderer.sprite = Resources.Load<Sprite>("TileSprites/" + SpriteName());
-        gameObject.name = "Tile_" + SpriteName();
+        if (starterTile) {
+            GenerateTile("CRGR0");
+        }
     }
 
     public void ToggleConnectors(bool isOn) {
@@ -54,12 +55,10 @@ public class TileController : MonoBehaviour
 
         //Get the string number
         var allSprites = Resources.LoadAll("TileSprites", typeof(Sprite));
-        Debug.Log(allSprites.Length);
         List<string> spriteNames = new List<string>();
         foreach (var sprite in allSprites) {
             if (sprite.name.Contains(spriteName)) {
                 spriteNames.Add(sprite.name);
-                Debug.Log(sprite.name);
             }
         }
         if (spriteNames.Count == 0) {
@@ -67,5 +66,27 @@ public class TileController : MonoBehaviour
             return "CCCC0";
         }
         return spriteNames[Random.Range(0, spriteNames.Count)];
+    }
+
+    public void GenerateTile(string tileId) {
+        //Get the string
+        for (int i = 0; i < tileConnectors.Length; i++) {
+            switch (tileId[i]) {
+                case 'G':
+                    tileConnectors[i].tileType = TileType.Grass;
+                    break;
+                case 'C':
+                    tileConnectors[i].tileType = TileType.City;
+                    break;
+                case 'R':
+                    tileConnectors[i].tileType = TileType.Road;
+                    break;
+            }
+        }
+        
+        renderer = GetComponentInChildren<SpriteRenderer>();
+        var spriteName = tileId.Length == 4 ? SpriteName() : tileId;
+        renderer.sprite = Resources.Load<Sprite>("TileSprites/" + spriteName);
+        gameObject.name = "Tile_" + SpriteName();
     }
 }

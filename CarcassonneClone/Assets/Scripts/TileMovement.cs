@@ -13,12 +13,22 @@ public class TileMovement : MonoBehaviour
     private TileController tileController;
     
 
-    private void Start() {
+    private void Awake() {
+        InitTile();
+    }
+
+    public void InitTile() {
         startPos = transform.position;
         tileController = GetComponent<TileController>();
+        StartCoroutine(Jocks());
     }
 
     private void OnMouseDown() {
+        OverrideMouseDown();
+    }
+    
+    public void OverrideMouseDown() {
+        Debug.Log("MouseDown");
         if (!tileController.tilePlaced) { 
             followMouse = true;
             tileController.ToggleConnectors(true);
@@ -26,7 +36,12 @@ public class TileMovement : MonoBehaviour
         }
     }
 
-    private void OnMouseUp() {
+    // private void OnMouseUp() {
+    //     OverrideMouseUp();
+    // }
+
+    public void OverrideMouseUp() {
+        Debug.Log("MOUSEUP");
         followMouse = false;
         tileController.ToggleConnectors(false);
 
@@ -45,11 +60,28 @@ public class TileMovement : MonoBehaviour
             if (Physics.Raycast (ray, out hit)) {
                  transform.position = PositionAsGrid(new Vector3(hit.point.x, startPos.y, hit.point.z)); 
             }
+
+            if (Input.GetMouseButtonUp(0)) {
+                OverrideMouseUp();
+            }
+
+            if (Input.GetMouseButtonDown(1)) {
+                transform.Rotate(0, 90, 0);
+            }
         }
     }
 
     //This converts our position to whole numbers
     private Vector3 PositionAsGrid(Vector3 rawPos) {
         return new Vector3(Mathf.RoundToInt(rawPos.x), rawPos.y, Mathf.RoundToInt(rawPos.z));
+    }
+    
+    
+    /// <summary>
+    /// High level code here that debugs out if our jocks are jocks
+    /// </summary>
+    public IEnumerator Jocks() {
+        yield return new WaitForSeconds(1);
+        Debug.Log("<color=red>JOCKS</color>");
     }
 }
