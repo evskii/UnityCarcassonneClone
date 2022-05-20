@@ -7,9 +7,14 @@ public class TileConnector : MonoBehaviour
 {
 	public TileController.TileType tileType;
 	private TileController tileController;
-	public TileController connectedTo;
-	public bool isOn;
+	public TileConnector connectedTo;
+	[HideInInspector] public bool isOn;
 
+	[HideInInspector] public bool valid = false;
+	[HideInInspector] public bool emptySpace = true;
+
+	public bool closed;
+	
 	private void Awake() {
 		tileController = GetComponentInParent<TileController>();
 	}
@@ -18,8 +23,13 @@ public class TileConnector : MonoBehaviour
 		if (isOn) {
 			if (other.TryGetComponent(out TileConnector connector)) {
 				if (connector.tileType == tileType) {
-					tileController.canPlace = true;
+					connectedTo = connector;
+					connector.connectedTo = this;
+					valid = true;
+				} else {
+					valid = false;
 				}
+				emptySpace = false;
 			}
 		}
 	}
@@ -27,6 +37,9 @@ public class TileConnector : MonoBehaviour
 	private void OnTriggerExit(Collider other) {
 		if (isOn) {
 			tileController.canPlace = false;
+			connectedTo = null;
+			emptySpace = true;
+			valid = false;
 		}
 	}
 

@@ -29,9 +29,9 @@ public class TileController : MonoBehaviour
         ToggleConnectors(false);
         tilePlaced = starterTile;
 
-        if (starterTile) {
-            GenerateTile("CRGR0");
-        }
+        // if (starterTile) {
+        //     GenerateTile("CRGR0");
+        // }
     }
 
     public void ToggleConnectors(bool isOn) {

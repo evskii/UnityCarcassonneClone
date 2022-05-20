@@ -11,6 +11,7 @@ public class DrawPile : MonoBehaviour
 	public GameObject tileToSpawn;
 
 	private List<String> allTileIds = new List<string>();
+	[SerializeField]private List<GameObject> alltilePrefabs = new List<GameObject>();
 	private List<String> shuffledTiles = new List<string>();
 
 	private void Awake() {
@@ -39,8 +40,19 @@ public class DrawPile : MonoBehaviour
 	
 	public void Draw() {
 		if (shuffledTiles.Count > 0) {
+			GameObject tileToSpawn = null;
+			foreach (var tile in alltilePrefabs) {
+				if (tile.name == shuffledTiles[0]) {
+					tileToSpawn = tile;
+					break;
+				}
+			}
+			if (tileToSpawn == null) {
+				Debug.LogError("CANNOT FIND TILE: " + shuffledTiles[0]);
+				return;
+			}
 			var newTile = Instantiate(tileToSpawn, transform.position, Quaternion.identity);
-            newTile.GetComponent<TileController>().GenerateTile(shuffledTiles[0]);
+            // newTile.GetComponent<TileController>().GenerateTile(shuffledTiles[0]);
             newTile.GetComponent<TileMovement>().OverrideMouseDown();
             shuffledTiles.Remove(shuffledTiles[0]);
 		} else {
